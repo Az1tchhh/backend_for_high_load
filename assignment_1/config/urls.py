@@ -20,13 +20,13 @@ from django.contrib import admin
 from django.urls import path
 from ninja_extra import NinjaExtraAPI
 
-from assignment_1.apps.users.authorization import GlobalAuth
+from apps.users.authorization import GlobalAuth
 
 api = NinjaExtraAPI(auth=GlobalAuth())
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', )
+    path('api/', api.urls)
 ]
 
 if settings.DEBUG:

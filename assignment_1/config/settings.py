@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'ninja_jwt',
     'ninja',
     'ninja_extra',
+
+    'apps.users.apps.UsersConfig',
 ]
 
 NINJA_JWT = {

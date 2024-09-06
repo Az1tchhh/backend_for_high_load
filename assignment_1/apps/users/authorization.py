@@ -3,7 +3,7 @@ from ninja.security import HttpBearer
 from django.conf import settings
 from ninja.errors import HttpError
 
-from assignment_1.apps.users.models import User
+from apps.users.models import User
 
 
 class GlobalAuth(HttpBearer):
