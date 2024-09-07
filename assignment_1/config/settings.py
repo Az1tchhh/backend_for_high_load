@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'ninja_extra',
 
     'apps.users.apps.UsersConfig',
+    'apps.blog.apps.BlogConfig'
 ]
 
 NINJA_JWT = {
