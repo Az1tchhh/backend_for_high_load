@@ -3,7 +3,7 @@ from typing import Optional
 from ninja import ModelSchema, Schema
 from pydantic import Field
 
-from apps.blog.models import Post
+from apps.blog.models import Post, Comment
 
 
 class PostSchema(ModelSchema):
@@ -48,3 +48,23 @@ class PostRetrieveSchema(ModelSchema):
             'created_at',
             'updated_at',
         )
+
+
+class CommentSchema(ModelSchema):
+    author_name: str = Field(..., alias='author.username')
+    post_title: str = Field(..., alias='post.title')
+    class Meta:
+        model = Comment
+        fields = (
+            'id',
+            'text',
+            'author',
+            'post',
+            'created_at',
+            'updated_at',
+        )
+
+
+class CommentCreateSchema(Schema):
+    text: str
+    post_id: int = Field(..., alias='post_id')

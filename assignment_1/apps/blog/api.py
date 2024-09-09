@@ -7,8 +7,10 @@ from ninja_extra.schemas import NinjaPaginationResponseSchema, PaginatedResponse
 
 from apps.blog.forms import PostForm
 from apps.blog.models import Post
-from apps.blog.schemas import PostSchema, PostRetrieveSchema, PostCreateSchema, PostUpdateSchema
-from apps.blog.services import get_posts, get_post_by_id, create_post, update_post, delete_post_by_id
+from apps.blog.schemas import PostSchema, PostRetrieveSchema, PostCreateSchema, PostUpdateSchema, CommentSchema, \
+    CommentCreateSchema
+from apps.blog.services import get_posts, get_post_by_id, create_post, update_post, delete_post_by_id, create_comment, \
+    get_my_comments
 from apps.users.permissions import IsBlogUser
 from apps.utils.schemas import NoContentSchema
 
@@ -69,3 +71,20 @@ class BlogPostController(ControllerBase):
         user = self.context.request.auth
         delete_post_by_id(id, user)
         return
+
+
+@api_controller('blog-posts/comments/', tags=['comments'], permissions=[IsBlogUser])
+class BlogCommentController(ControllerBase):
+
+    @route.get('my/', response=PaginatedResponseSchema[CommentSchema])
+    @paginate()
+    def get_my_comments(self):
+        user = self.context.request.auth
+        comments = get_my_comments(user)
+        return comments
+
+    @route.post('', response=CommentSchema)
+    def create_comment(self, payload: CommentCreateSchema):
+        user = self.context.request.auth
+        comment = create_comment(user, payload)
+        return comment

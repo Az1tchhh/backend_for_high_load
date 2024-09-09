@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from ninja_extra import NinjaExtraAPI
 
-from apps.blog.api import BlogPostController
+from apps.blog.api import BlogPostController, BlogCommentController
 from apps.users.api import BlogAuthenticationController
 from apps.users.authorization import GlobalAuth
 
@@ -28,6 +28,7 @@ api = NinjaExtraAPI(auth=GlobalAuth())
 
 api.register_controllers(BlogAuthenticationController)
 api.register_controllers(BlogPostController)
+api.register_controllers(BlogCommentController)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

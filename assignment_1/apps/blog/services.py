@@ -1,7 +1,7 @@
 from typing import Optional
 
-from apps.blog.models import Post
-from apps.blog.schemas import PostCreateSchema, PostUpdateSchema
+from apps.blog.models import Post, Comment
+from apps.blog.schemas import PostCreateSchema, PostUpdateSchema, CommentCreateSchema
 from apps.users.models import User
 from apps.utils.exceptions import ValidationException
 
@@ -48,3 +48,14 @@ def delete_post_by_id(post_id: int, user: User):
         raise ValidationException("post does not exist")
     post.delete()
     return
+
+
+def get_my_comments(user: User):
+    comments = Comment.objects.filter(author=user)
+    return comments
+
+
+def create_comment(user: User, payload: CommentCreateSchema):
+    data = payload.model_dump()
+    comment = Comment.objects.create(**data, author=user)
+    return comment
