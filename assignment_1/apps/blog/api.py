@@ -1,6 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from ninja.responses import Response
-from ninja_extra import route, ControllerBase, api_controller
+from ninja_extra import route, ControllerBase, api_controller, paginate
+from ninja_extra.pagination import PageNumberPaginationExtra
+from ninja_extra.schemas import NinjaPaginationResponseSchema, PaginatedResponseSchema
 
+from apps.blog.forms import PostForm
 from apps.blog.models import Post
 from apps.blog.schemas import PostSchema, PostRetrieveSchema, PostCreateSchema, PostUpdateSchema
 from apps.blog.services import get_posts, get_post_by_id, create_post, update_post, delete_post_by_id
@@ -14,7 +19,24 @@ class BlogPostController(ControllerBase):
     def hello(self):
         return Response("Hello, Blog!")
 
-    @route.get('my/', response=list[PostSchema])
+    @route.generic('form/', methods=['GET', 'POST'])
+    def form_create_post(self):
+        user = self.context.request.auth
+        if self.context.request.method == 'POST':
+            form = PostForm(self.context.request.POST)
+            print(form)
+            if form.is_valid():
+                post = form.data
+                print(post)
+                post.author = user
+                post.save()
+                return post
+        else:
+            form = PostForm()
+        return render(self.context.request, '../templates/create_post.html', {'form': form})
+
+    @route.get('my/', response=PaginatedResponseSchema[PostSchema])
+    @paginate()
     def get_my_posts(self):
         user = self.context.request.auth
         posts = get_posts(user)

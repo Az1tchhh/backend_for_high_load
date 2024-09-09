@@ -55,6 +55,11 @@ INSTALLED_APPS = [
     'apps.blog.apps.BlogConfig'
 ]
 
+NINJA_EXTRA = {
+    'PAGINATION_CLASS': "ninja_extra.pagination.PageNumberPaginationExtra",
+    'PAGINATION_PER_PAGE': 20,
+}
+
 NINJA_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
@@ -90,7 +95,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'apps/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
