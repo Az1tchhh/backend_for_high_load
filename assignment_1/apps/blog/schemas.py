@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from ninja import ModelSchema, Schema
@@ -64,6 +65,14 @@ class CommentSchema(ModelSchema):
             'updated_at',
         )
 
+
+class CommentSimpleSchema(Schema):
+    id: int
+    author_name: str = Field(..., alias='author.username')
+    author_id: int
+    text: str
+    created_at: datetime
+    updated_at: datetime
 
 class CommentCreateSchema(Schema):
     text: str

@@ -50,9 +50,19 @@ def delete_post_by_id(post_id: int, user: User):
     return
 
 
-def get_my_comments(user: User):
-    comments = Comment.objects.filter(author=user)
+def get_comments(user: User):
+    if user:
+        comments = Comment.objects.filter(author=user)
+        return comments
+    comments = Comment.objects.all()
     return comments
+
+
+def get_comments_by_post(post_id: int):
+    post = get_post_by_id(post_id)
+    if post is None:
+        raise ValidationException("Post does not exist")
+    return post.comments.all()
 
 
 def create_comment(user: User, payload: CommentCreateSchema):
