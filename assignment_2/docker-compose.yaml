@@ -1,0 +1,91 @@
+volumes:
+  postgres_data:
+  # src:
+  media:
+  static:
+  logs:
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend1
+      - backend2
+
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - PGUSER=assignment_2_user
+      - POSTGRES_USER=assignment_2_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=assignment_2_db
+    ports:
+      - "5432:5432"
+
+  backend1:
+    build: .
+    command: >
+      bash -c "python3 manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8001 --workers 8 --log-level 'debug'"
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # - .:/src
+      - ./media:/src/mediafiles
+      - ./static:/src/static
+      - logs:/logs
+    depends_on:
+      - db
+
+  backend2:
+    build: .
+    command: >
+      bash -c "python3 manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8001 --workers 8 --log-level 'debug'"
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # - .:/src
+      - ./media:/src/mediafiles
+      - ./static:/src/static
+      - logs:/logs
+    depends_on:
+      - db
+
+  redis:
+    restart: unless-stopped
+    image: redis:alpine
+    command: redis-server --requirepass OMeDuTERnUtH
+    ports:
+      - "6379:6379"
+
+#  celery:
+#    build: .
+#    restart: unless-stopped
+#    env_file:
+#      - .env
+#    command: celery -A config worker -l info
+#    # volumes:
+#      # - .:/src
+#      # - media:/mediafiles
+#    depends_on:
+#      - redis
+#
+#  celery-beat:
+#    build: .
+#    restart: unless-stopped
+#    env_file:
+#      - .env
+#    command: celery -A config beat -l debug
+#    # volumes:
+#      # - .:/src
+#      # - media:/mediafiles
+#    depends_on:
+#      - redis
