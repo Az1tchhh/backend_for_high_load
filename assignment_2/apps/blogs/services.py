@@ -15,11 +15,11 @@ def get_posts(user: Optional[User] = None):
     if posts:
         return posts
 
-    posts = Post.objects.all().prefetch_related('comments', 'tags')
+    posts = Post.objects.all()
     if user:
         posts = posts.filter(author=user)
         return posts
-
+    print(posts.query)
     cache.set('cached_posts', posts, timeout=5)
     return posts
 
