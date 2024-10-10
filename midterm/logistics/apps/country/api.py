@@ -1,5 +1,6 @@
 from typing import List
 
+from django.core.cache import cache
 from ninja import Query
 from ninja_extra import api_controller, ControllerBase, route
 from ninja_extra.permissions import AllowAny
@@ -13,7 +14,10 @@ from apps.country.schemas import CountrySchema, CountryCreateSchema, CityCreateS
 class CountryController(ControllerBase):
     @route.get('/', response=list[CountrySchema])
     def list_countries(self, filters: CountryFilterSchema = Query(...)) -> list[CountrySchema]:
-        countries = Country.objects.all()
+        countries = cache.get('country-list', None)
+        if countries is None:
+            countries = Country.objects.all()
+            cache.set('country-list', countries, timeout=300)
         countries = filters.filter(countries)
         return countries
 
@@ -25,6 +29,7 @@ class CountryController(ControllerBase):
     @route.post('/')
     def create_country(self, data: CountryCreateSchema) -> CountrySchema:
         country = Country.objects.create(**data.dict())
+        cache.delete('country-list')
         return CountrySchema.from_orm(country)
 
     @route.put('/{int:country_id}/')
@@ -33,12 +38,14 @@ class CountryController(ControllerBase):
         for attr, value in data.dict().items():
             setattr(country, attr, value)
         country.save()
+        cache.delete('country-list')
         return CountrySchema.from_orm(country)
 
     @route.delete('/{int:country_id}/')
     def delete_country(self, country_id: int):
         country = self.get_object_or_exception(Country, id=country_id)
         country.delete()
+        cache.delete('country-list')
         return {"success": True}
 
 

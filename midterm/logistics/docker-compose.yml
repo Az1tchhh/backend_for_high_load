@@ -52,7 +52,7 @@ services:
     image: redis:alpine
     command: redis-server --requirepass OMeDuTERnUtH
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
   celery:
     build: .

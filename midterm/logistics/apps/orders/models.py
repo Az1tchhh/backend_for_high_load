@@ -10,7 +10,7 @@ def order_barcode_upload(instance, filename):
 
 
 class Order(models.Model):
-    track_number = models.CharField(max_length=255, null=True, unique=True)
+    track_number = models.CharField(max_length=255, null=True, unique=True, db_index=True)
     currency = models.CharField(choices=CurrencyChoices.choices, default=CurrencyChoices.USD)
     comment = models.CharField(max_length=255, null=True)
     warehouse = models.ForeignKey(to='warehouse.Warehouse', on_delete=models.PROTECT, null=False)
@@ -63,7 +63,7 @@ class OrderStatusHistory(models.Model):
     status = models.CharField(choices=OrderStatus.choices, max_length=50)
     at_pickup_point = models.ForeignKey(to='pickup_point.PickUpPoint', on_delete=models.CASCADE, null=True, blank=True)
     at_warehouse = models.ForeignKey(to='warehouse.Warehouse', on_delete=models.CASCADE, null=True, blank=True)
-    changed_at = models.DateTimeField(default=timezone.now)
+    changed_at = models.DateTimeField(auto_now=True, db_index=True)
 
     def __str__(self):
         return f"{self.order.id} - {self.status} ({self.changed_at})"

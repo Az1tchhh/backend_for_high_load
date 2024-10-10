@@ -209,6 +209,18 @@ REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = os.getenv('REDIS_PORT', '6379')
 REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://:{redis_password}@{redis_host}:{redis_port}".format(
+            redis_host=REDIS_HOST,
+            redis_port=REDIS_PORT,
+            redis_password=REDIS_PASSWORD
+        ),
+        'TIMEOUT': None,
+    }
+}
+
 CELERY_BROKER_URL = 'redis://:{redis_password}@{host}:{port}'.format(
     host=REDIS_HOST,
     port=REDIS_PORT,

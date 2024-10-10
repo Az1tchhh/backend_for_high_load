@@ -26,7 +26,7 @@ class OrderController(ControllerBase):
 
     def get_queryset(self):
         user = self.context.request.auth
-        queryset = Order.objects.all()
+        queryset = Order.objects.all().select_related('tare', 'cell', 'pickup_point', 'warehouse')
         if hasattr(user, 'web_user'):
             if user.web_user.role == RoleType.ADMIN:
                 pass
