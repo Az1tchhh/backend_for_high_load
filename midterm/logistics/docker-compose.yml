@@ -8,6 +8,15 @@ volumes:
   logs:
 
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+
   db:
     image: postgres:13-alpine
     restart: unless-stopped

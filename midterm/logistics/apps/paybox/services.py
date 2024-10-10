@@ -47,9 +47,9 @@ def start_init_payment(transaction_id):
         'pg_currency': 'KZT',
         'pg_language': 'ru',
         'pg_testing_mode': '1',
-        'pg_success_url': 'https://api.sirex.oitech.kz/api/paybox/result/success/',
-        'pg_failure_url': 'https://api.sirex.oitech.kz/api/paybox/result/failure/',
-        'pg_result_url': 'https://api.sirex.oitech.kz/api/paybox/result/payment/',  # 8001 port for testing
+        'pg_success_url': 'http://2.135.67.66:8001/api/paybox/result/success/',
+        'pg_failure_url': 'http://2.135.67.66:8001/api/paybox/result/failure/',
+        'pg_result_url': 'http://2.135.67.66:8001/api/paybox/result/payment/',  # 8001 port for testing
         'pg_user_phone': f'{phone_number}',
         'pg_user_id': f'{transaction.wallet.user.id}'
     }
@@ -77,9 +77,9 @@ def pay_with_saved_card(card_token, transaction_id):
         'pg_order_id': transaction.id,
         'pg_description': f'Перевод денег: {phone_number}',
         'pg_card_token': card_token,
-        'pg_result_url': 'https://api.sirex.oitech.kz/api/paybox/result/payment/',
-        'pg_success_url': 'https://api.sirex.oitech.kz/api/paybox/result/success/',
-        'pg_failure_url': 'https://api.sirex.oitech.kz/api/paybox/result/failure/',
+        'pg_result_url': 'http://2.135.67.66:8001/api/paybox/result/payment/',
+        'pg_success_url': 'http://2.135.67.66:8001/api/paybox/result/success/',
+        'pg_failure_url': 'http://2.135.67.66:8001/api/paybox/result/failure/',
         'pg_salt': salt,
     }
     first_step_post_data['pg_sig'] = generate_sign(first_step_post_data, 'init')
@@ -111,8 +111,8 @@ def save_user_card(user):
         'pg_merchant_id': merchant_id,
         'pg_user_id': user.id,
         'pg_salt': salt,
-        'pg_post_link': 'https://api.sirex.oitech.kz/api/paybox/result/card-save/',
-        'pg_back_link': 'https://api.sirex.oitech.kz/'
+        'pg_post_link': 'http://2.135.67.66:8001/api/paybox/result/card-save/',
+        'pg_back_link': 'http://2.135.67.66:8001/'
     }
     data['pg_sig'] = generate_sign(data, 'add2')
 
